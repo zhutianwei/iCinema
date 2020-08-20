@@ -1,0 +1,38 @@
+server:
+  port: 8081
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://Z:Z123@localhost:8761/eureka/
+
+spring:
+  application:
+    name: cloudgw-service
+  cloud:
+    gateway:
+      routes:
+      - id: Z-predicate
+        uri: "http://www.jd.com"
+        predicates:
+        - ZAfter=2028-01-01
+        filters:
+        - Z=imooc,Z
+      - id: film-router
+        uri: lb://film-service
+        filters:
+          - RewritePath=/meetingfilm/filmapi/(?<segment>.*), /$\{segment}
+        predicates:
+        - Path=/meetingfilm/filmapi/films/**
+      - id: hystrix-router
+        uri: "http://www.Z-imooc.com"
+        filters:
+          - name: Hystrix
+            args:
+              name: ZHystrix
+              fallbackUri: forward:/myFallback
+        predicates:
+        - Path=/fallback/**
+
+logging:
+  config: classpath:logback.xml
